@@ -1,38 +1,61 @@
 package com.diary.services;
 
 import com.diary.models.User;
-import com.diary.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-@Service
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import java.util.List;
+
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
+    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("diary-unit");
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    public User registerUser(User user) {
-        if(userRepository.existsByEmail(user.getEmail())) {
-            throw new IllegalArgumentException("Email already in use!");
-        }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
-    }
-
-    public User loginUser(String email, String password) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found!"));
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("Incorrect password!");
-        }
-        return user;
+    public List<User> getAllUsers() {
+        EntityManager em = emf.createEntityManager();
+        List<User> users = em.createQuery("SELECT u FROM User u", User.class).getResultList();
+        em.close();
+        return users;
     }
 
     public User getUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Пользователь не найден"));
+        EntityManager em = emf.createEntityManager();
+        User user = em.find(User.class, id);
+        em.close();
+        return user;
+    }
+
+    public User createUser(User user) {
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(user);
+        em.getTransaction().commit();
+        em.close();
+        return user;
+    }
+
+    public User updateUser(Long id, User updatedUser) {
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        User user = em.find(User.class, id);
+        if (user != null) {
+            user.setName(updatedUser.getName());
+            user.setEmail(updatedUser.getEmail());
+            user.setPassword(updatedUser.getPassword());
+            em.merge(user);
+        }
+        em.getTransaction().commit();
+        em.close();
+        return user;
+    }
+
+    public void deleteUser(Long id) {
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        User user = em.find(User.class, id);
+        if (user != null) {
+            em.remove(user);
+        }
+        em.getTransaction().commit();
+        em.close();
     }
 }

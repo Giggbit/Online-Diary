@@ -1,41 +1,60 @@
 package com.diary.services;
 
 import com.diary.models.Diary;
-import com.diary.repositories.DiaryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import java.util.List;
 
-@Service
 public class DiaryService {
-    @Autowired
-    private DiaryRepository diaryRepository;
+    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("diary-unit");
 
     public List<Diary> getAllDiaries() {
-        return diaryRepository.findAll();
+        EntityManager em = emf.createEntityManager();
+        List<Diary> diaries = em.createQuery("SELECT d FROM Diary d", Diary.class).getResultList();
+        em.close();
+        return diaries;
     }
 
     public Diary getDiaryById(Long id) {
-        return diaryRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Diary not found!"));
+        EntityManager em = emf.createEntityManager();
+        Diary diary = em.find(Diary.class, id);
+        em.close();
+        return diary;
     }
 
     public Diary createDiary(Diary diary) {
-        diary.setCreatedAt(LocalDateTime.now());
-        diary.setUpdatedAt(LocalDateTime.now());
-        return diaryRepository.save(diary);
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(diary);
+        em.getTransaction().commit();
+        em.close();
+        return diary;
     }
 
     public Diary updateDiary(Long id, Diary updatedDiary) {
-        Diary diary = diaryRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Diary not found!"));
-        diary.setTitle(updatedDiary.getTitle());
-        diary.setContent(updatedDiary.getContent());
-        diary.setTags(updatedDiary.getTags());
-        diary.setUpdatedAt(LocalDateTime.now());
-        return diaryRepository.save(diary);
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        Diary diary = em.find(Diary.class, id);
+        if (diary != null) {
+            diary.setTitle(updatedDiary.getTitle());
+            diary.setContent(updatedDiary.getContent());
+            em.merge(diary);
+        }
+        em.getTransaction().commit();
+        em.close();
+        return diary;
     }
 
     public void deleteDiary(Long id) {
-        diaryRepository.deleteById(id);
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        Diary diary = em.find(Diary.class, id);
+        if (diary != null) {
+            em.remove(diary);
+        }
+        em.getTransaction().commit();
+        em.close();
     }
 }

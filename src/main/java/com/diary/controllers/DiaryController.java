@@ -2,39 +2,50 @@ package com.diary.controllers;
 
 import com.diary.models.Diary;
 import com.diary.services.DiaryService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/diaries")
+@Path("/diaries")
 public class DiaryController {
-    @Autowired
-    private DiaryService diaryService;
 
-    @GetMapping
+    private final DiaryService diaryService;
+
+    public DiaryController() {
+        this.diaryService = new DiaryService();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
     public List<Diary> getAllDiaries() {
         return diaryService.getAllDiaries();
     }
 
-    @GetMapping("/{id}")
-    public Diary getDiaryById(@PathVariable Long id) {
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Diary getDiaryById(@PathParam("id") Long id) {
         return diaryService.getDiaryById(id);
     }
 
-    @PostMapping
-    public Diary createDiary(@RequestBody Diary diary) {
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Diary createDiary(Diary diary) {
         return diaryService.createDiary(diary);
     }
 
-    @PutMapping("/{id}")
-    public Diary updateDiary(@PathVariable Long id, @RequestBody Diary updatedDiary) {
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Diary updateDiary(@PathParam("id") Long id, Diary updatedDiary) {
         return diaryService.updateDiary(id, updatedDiary);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteDiary(@PathVariable Long id) {
+    @DELETE
+    @Path("/{id}")
+    public void deleteDiary(@PathParam("id") Long id) {
         diaryService.deleteDiary(id);
     }
 }

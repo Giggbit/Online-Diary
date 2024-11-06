@@ -1,30 +1,59 @@
 package com.diary.services;
 
 import com.diary.models.Tag;
-import com.diary.repositories.TagRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import java.util.List;
 
-@Service
 public class TagService {
-    @Autowired
-    private TagRepository tagRepository;
+    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("diary-unit");
 
     public List<Tag> getAllTags() {
-        return tagRepository.findAll();
+        EntityManager em = emf.createEntityManager();
+        List<Tag> tags = em.createQuery("SELECT t FROM Tag t", Tag.class).getResultList();
+        em.close();
+        return tags;
     }
 
     public Tag getTagById(Long id) {
-        return tagRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Tag not found!"));
+        EntityManager em = emf.createEntityManager();
+        Tag tag = em.find(Tag.class, id);
+        em.close();
+        return tag;
     }
 
-    public Tag createTag(Tag tag){
-        return tagRepository.save(tag);
+    public Tag createTag(Tag tag) {
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(tag);
+        em.getTransaction().commit();
+        em.close();
+        return tag;
+    }
+
+    public Tag updateTag(Long id, Tag updatedTag) {
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        Tag existingTag = em.find(Tag.class, id);
+        if (existingTag != null) {
+            existingTag.setName(updatedTag.getName());
+            em.merge(existingTag);
+        }
+        em.getTransaction().commit();
+        em.close();
+        return existingTag;
     }
 
     public void deleteTag(Long id) {
-        tagRepository.deleteById(id);
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        Tag tag = em.find(Tag.class, id);
+        if (tag != null) {
+            em.remove(tag);
+        }
+        em.getTransaction().commit();
+        em.close();
     }
 }
