@@ -7,9 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +29,9 @@ public class UserServiceTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("diary-unit");
+        entityManager = emf.createEntityManager();
+
         when(entityManager.getTransaction()).thenReturn(entityTransaction);
     }
 

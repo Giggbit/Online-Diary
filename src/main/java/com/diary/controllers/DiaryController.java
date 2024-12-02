@@ -2,6 +2,9 @@ package com.diary.controllers;
 
 import com.diary.models.Diary;
 import com.diary.services.DiaryService;
+
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
@@ -12,7 +15,8 @@ public class DiaryController {
     private final DiaryService diaryService;
 
     public DiaryController() {
-        this.diaryService = new DiaryService();
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("diary-unit");
+        this.diaryService = new DiaryService(emf);
     }
 
     @GET

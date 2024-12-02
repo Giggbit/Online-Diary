@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
 
@@ -20,18 +21,23 @@ import static org.mockito.Mockito.*;
 public class DiaryServiceTest {
 
     @Mock
+    private EntityManagerFactory entityManagerFactory;
+
+    @Mock
     private EntityManager entityManager;
 
     @Mock
     private EntityTransaction entityTransaction;
 
-    @InjectMocks
     private DiaryService diaryService;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        when(entityManagerFactory.createEntityManager()).thenReturn(entityManager);
         when(entityManager.getTransaction()).thenReturn(entityTransaction);
+
+        diaryService = new DiaryService(entityManagerFactory);
     }
 
     @Test

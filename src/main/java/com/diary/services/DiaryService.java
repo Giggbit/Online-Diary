@@ -4,11 +4,14 @@ import com.diary.models.Diary;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import java.util.List;
 
 public class DiaryService {
-    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("diary-unit");
+    private final EntityManagerFactory emf;
+
+    public DiaryService(EntityManagerFactory emf) {
+        this.emf = emf;
+    }
 
     public List<Diary> getAllDiaries() {
         EntityManager em = emf.createEntityManager();
