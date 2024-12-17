@@ -15,6 +15,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Тесты для класса UserService.
+ */
 public class UserServiceTest {
 
     @Mock
@@ -26,6 +29,9 @@ public class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
+    /**
+     * Инициализация моков перед каждым тестом.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -35,6 +41,9 @@ public class UserServiceTest {
         when(entityManager.getTransaction()).thenReturn(entityTransaction);
     }
 
+    /**
+     * Тест получения всех пользователей.
+     */
     @Test
     public void testGetAllUsers() {
         List<User> expectedUsers = new ArrayList<>();
@@ -49,6 +58,9 @@ public class UserServiceTest {
         verify(mockQuery).getResultList();
     }
 
+    /**
+     * Тест получения пользователя по ID.
+     */
     @Test
     public void testGetUserById() {
         User expectedUser = new User();
@@ -58,6 +70,9 @@ public class UserServiceTest {
         verify(entityManager).find(User.class, 1L);
     }
 
+    /**
+     * Тест создания пользователя.
+     */
     @Test
     public void testCreateUser() {
         User user = new User();
@@ -68,6 +83,9 @@ public class UserServiceTest {
         verify(entityTransaction).commit();
     }
 
+    /**
+     * Тест обновления пользователя.
+     */
     @Test
     public void testUpdateUser() {
         User existingUser = new User();
@@ -83,6 +101,9 @@ public class UserServiceTest {
         verify(entityTransaction).commit();
     }
 
+    /**
+     * Тест удаления пользователя.
+     */
     @Test
     public void testDeleteUser() {
         User user = new User();

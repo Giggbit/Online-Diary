@@ -7,9 +7,18 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.List;
 
+/**
+ * Сервис для управления пользователями.
+ * Реализует CRUD операции с использованием JPA.
+ */
 public class UserService {
     private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("diary-unit");
 
+    /**
+     * Получает всех пользователей из базы данных.
+     *
+     * @return список всех пользователей.
+     */
     public List<User> getAllUsers() {
         EntityManager em = emf.createEntityManager();
         List<User> users = em.createQuery("SELECT u FROM User u", User.class).getResultList();
@@ -17,6 +26,12 @@ public class UserService {
         return users;
     }
 
+    /**
+     * Получает пользователя по его идентификатору.
+     *
+     * @param id идентификатор пользователя.
+     * @return пользователь или null, если пользователь не найден.
+     */
     public User getUserById(Long id) {
         EntityManager em = emf.createEntityManager();
         User user = em.find(User.class, id);
@@ -24,6 +39,12 @@ public class UserService {
         return user;
     }
 
+    /**
+     * Создает нового пользователя.
+     *
+     * @param user объект пользователя для сохранения.
+     * @return сохраненный пользователь.
+     */
     public User createUser(User user) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
@@ -33,6 +54,13 @@ public class UserService {
         return user;
     }
 
+    /**
+     * Обновляет данные существующего пользователя.
+     *
+     * @param id          идентификатор пользователя.
+     * @param updatedUser объект с обновленными данными.
+     * @return обновленный пользователь или null, если пользователь не найден.
+     */
     public User updateUser(Long id, User updatedUser) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
@@ -48,6 +76,11 @@ public class UserService {
         return user;
     }
 
+    /**
+     * Удаляет пользователя по его идентификатору.
+     *
+     * @param id идентификатор пользователя.
+     */
     public void deleteUser(Long id) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
