@@ -39,7 +39,7 @@ public class UserController {
             User user = userOptional.get();
             if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
                 String token = jwtTokenUtil.generateToken(user.getEmail(), user.getRole());
-                return ResponseEntity.ok().body("Bearer: " + token);
+                return ResponseEntity.ok().body("Bearer " + token);
             }
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");

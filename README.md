@@ -1,4 +1,4 @@
-# Diary Service API
+  # Diary Service API
 
 ## Описание
 Этот проект предоставляет сервис управления пользователями с использованием JPA и Hibernate. Реализованы CRUD-операции (создание, чтение, обновление и удаление пользователей).
@@ -48,4 +48,6 @@ src/
 └── test/
     └── java/
         └── com/diary.online_diary/
-            └── OnlineDiaryApplicationTests
+            ├── utilTest/
+            │   └── JwtTokenUtilTest.java
+            └── OnlineDiaryApplicationTests.java

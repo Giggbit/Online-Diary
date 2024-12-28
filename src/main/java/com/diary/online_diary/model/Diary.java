@@ -38,7 +38,6 @@ public class Diary {
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -46,7 +45,6 @@ public class Diary {
     public String getTitle() {
         return title;
     }
-
     public void setTitle(String title) {
         this.title = title;
     }
@@ -54,7 +52,6 @@ public class Diary {
     public String getContent() {
         return content;
     }
-
     public void setContent(String content) {
         this.content = content;
     }
@@ -62,7 +59,6 @@ public class Diary {
     public User getUser() {
         return user;
     }
-
     public void setUser(User user) {
         this.user = user;
     }
@@ -70,7 +66,6 @@ public class Diary {
     public List<Tag> getTags() {
         return tags;
     }
-
     public void setTags(List<Tag> tags) {
         this.tags = tags;
     }
@@ -78,7 +73,6 @@ public class Diary {
     public boolean isArchived() {
         return archived;
     }
-
     public void setArchived(boolean archived) {
         this.archived = archived;
     }
