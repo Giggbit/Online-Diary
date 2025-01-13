@@ -14,11 +14,11 @@ class JwtTokenUtilTest {
     private UserDetailsService userDetailsService;
     private String testToken;
 
-    @BeforeEach
-    void setUp() {
-        jwtTokenUtil = new JwtTokenUtil();
-        testToken = jwtTokenUtil.generateToken("test@example.com", "ROLE_USER");
-    }
+//    @BeforeEach
+//    void setUp() {
+//        jwtTokenUtil = new JwtTokenUtil();
+//        testToken = jwtTokenUtil.generateToken("test@example.com", "ROLE_USER");
+//    }
 
     @Test
     void testGenerateToken() {

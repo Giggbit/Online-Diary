@@ -1,8 +1,10 @@
 package com.diary.online_diary.config;
 
+import com.diary.online_diary.security.AuthSuccessHandler;
 import com.diary.online_diary.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,8 +16,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    private final AuthSuccessHandler authSuccessHandler;
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, @Lazy AuthSuccessHandler authSuccessHandler) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.authSuccessHandler = authSuccessHandler;
     }
 
     @Bean
@@ -32,6 +36,13 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
                         .defaultSuccessUrl("/home", true)
+                        .successHandler(authSuccessHandler)
+                )
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/home", true)
+                        .failureUrl("/login?error=true")
+                        .permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(httpBasic -> httpBasic.disable())
