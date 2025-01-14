@@ -1,8 +1,13 @@
 package com.diary.online_diary.service;
 
+import com.diary.online_diary.dto.DiaryRequest;
 import com.diary.online_diary.model.Diary;
+import com.diary.online_diary.model.Tag;
+import com.diary.online_diary.model.User;
 import com.diary.online_diary.repository.DiaryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.diary.online_diary.repository.TagRepository;
+import com.diary.online_diary.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,11 +15,28 @@ import java.util.Optional;
 
 @Service
 public class DiaryService {
-    @Autowired
-    private DiaryRepository diaryRepository;
+    private final DiaryRepository diaryRepository;
+    private final UserRepository userRepository;
+    private final TagRepository tagRepository;
 
-    public Diary createDiary(Diary diary) {
-        return diaryRepository.save(diary);
+    public DiaryService(DiaryRepository diaryRepository, UserRepository userRepository, TagRepository tagRepository) {
+        this.diaryRepository = diaryRepository;
+        this.userRepository = userRepository;
+        this.tagRepository = tagRepository;
+    }
+
+    @Transactional
+    public void createDiary(DiaryRequest request) {
+        User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        Diary diary = new Diary();
+        diary.setTitle(request.getTitle());
+        diary.setContent(request.getContent());
+        diary.setUser(user);
+
+        List<Tag> tags = tagRepository.findAllById(request.getTagIds());
+        diary.setTags(tags);
+        diaryRepository.save(diary);
     }
 
     public List<Diary> getDiariesByUserId(Long userId) {
@@ -46,5 +68,9 @@ public class DiaryService {
         Diary diary = diaryRepository.findById(diaryId).orElseThrow();
         diary.setArchived(true);
         diaryRepository.save(diary);
+    }
+
+    public List<Diary> findDiariesByTag(Long tagId) {
+        return diaryRepository.findByTagId(tagId);
     }
 }

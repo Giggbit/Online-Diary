@@ -59,9 +59,7 @@ public class Diary {
     public User getUser() {
         return user;
     }
-    public void setUser(User user) {
-        this.user = user;
-    }
+    public void setUser(User user) { this.user = user; }
 
     public List<Tag> getTags() {
         return tags;
